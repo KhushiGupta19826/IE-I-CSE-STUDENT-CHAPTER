@@ -69,12 +69,19 @@ export default function PosterLightbox({ event, events, onClose, onNavigate }) {
           onClick={e => e.stopPropagation()}
         >
           {/* Poster side */}
-          <div style={{ width: 300, flexShrink: 0 }}>
+          <div style={{
+            width: 300,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "flex-start",
+            overflow: "hidden",
+            borderRadius: "20px 0 0 20px",
+            background: "#18181b",
+          }}>
             <SafeImage
               src={event.poster}
               alt={`${event.title} poster`}
-              aspectRatio="poster"
-              style={{ height: "100%" }}
+              aspectRatio="natural"
               placeholderLabel={`${event.title}\n${event.category}`}
             />
           </div>

@@ -19,6 +19,21 @@ const statusStyle = {
   completed: { bg: "rgba(113,113,122,0.1)", text: "#71717a", border: "rgba(113,113,122,0.2)" },
 };
 
+const DETAIL_GRID_STYLE = `
+  .event-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .event-detail-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+`;
+
 export default function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
@@ -89,19 +104,37 @@ export default function EventDetails() {
 
       {/* Hero */}
       <section style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 64px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
-          {/* Poster — objectFit:contain preserves portrait ratio */}
+        <style>{DETAIL_GRID_STYLE}</style>
+        <div className="event-detail-grid">
+          {/* Poster — constrained width + max-height so it doesn't dominate the page */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #27272a", background: "#09090b" }}
+            style={{
+              borderRadius: 16,
+              overflow: "hidden",
+              border: "1px solid #27272a",
+              background: "#09090b",
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              maxHeight: 520,
+            }}
           >
-            <SafeImage
+            <img
               src={event.poster}
               alt={`${event.title} poster`}
-              aspectRatio="natural"
-              placeholderLabel={`${event.title}\n${event.category}`}
+              loading="lazy"
+              style={{
+                display: "block",
+                width: "auto",
+                height: "auto",
+                maxWidth: "100%",
+                maxHeight: 520,
+                objectFit: "contain",
+              }}
+              onError={e => { e.currentTarget.style.display = "none"; }}
             />
           </motion.div>
 
