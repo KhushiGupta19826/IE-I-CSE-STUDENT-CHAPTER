@@ -28,7 +28,7 @@ export default function PosterCard({ event, onClick }) {
         <SafeImage
           src={event.poster}
           alt={`${event.title} event poster`}
-          aspectRatio="poster"
+          aspectRatio="natural"
           placeholderLabel={`${event.title}\n${event.category}`}
         />
       </motion.div>

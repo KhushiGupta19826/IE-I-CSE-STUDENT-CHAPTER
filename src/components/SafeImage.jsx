@@ -8,6 +8,15 @@ const ratios = {
   wide:      "3 / 1",
 };
 
+/**
+ * SafeImage
+ *
+ * aspectRatio="natural" — lets the real image height drive the container height.
+ *   Renders as width:100%, height:auto — no fixed-ratio box.
+ *   Use this for portrait posters to avoid stretch/crop.
+ *
+ * All other aspectRatio values use a fixed-ratio box (position:absolute image inside).
+ */
 export default function SafeImage({
   src,
   alt = "",
@@ -17,7 +26,46 @@ export default function SafeImage({
   objectFit = "cover",
 }) {
   const [status, setStatus] = useState(src ? "loading" : "empty");
+  const isNatural = aspectRatio === "natural";
 
+  if (isNatural) {
+    // Natural mode: image determines height. No fixed-ratio wrapper.
+    return (
+      <div style={{ position: "relative", width: "100%", background: "#18181b", ...style }}>
+        {/* Skeleton shimmer — shown until image loads */}
+        {status === "loading" && (
+          <div
+            className="skeleton"
+            aria-hidden="true"
+            style={{ position: "absolute", inset: 0, minHeight: 120 }}
+          />
+        )}
+        {src ? (
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            style={{
+              display: "block",
+              width: "100%",
+              height: "auto",
+              transition: "opacity 0.35s",
+              opacity: status === "loaded" ? 1 : 0,
+            }}
+            onLoad={() => setStatus("loaded")}
+            onError={() => setStatus("error")}
+          />
+        ) : null}
+        {(status === "error" || status === "empty") && (
+          <div style={{ minHeight: 200 }}>
+            <PosterPlaceholder label={placeholderLabel || alt} inset />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Fixed-ratio mode (original behaviour)
   return (
     <div style={{
       position: "relative",
@@ -52,22 +100,24 @@ export default function SafeImage({
 
       {/* Placeholder */}
       {(status === "error" || status === "empty") && (
-        <PosterPlaceholder label={placeholderLabel || alt} />
+        <PosterPlaceholder label={placeholderLabel || alt} inset />
       )}
     </div>
   );
 }
 
-function PosterPlaceholder({ label }) {
+function PosterPlaceholder({ label, inset = false }) {
   const lines = label ? label.split("\n") : [];
   return (
     <div style={{
-      position: "absolute", inset: 0,
+      position: inset ? "absolute" : "relative",
+      inset: inset ? 0 : undefined,
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       padding: 16,
       background: "linear-gradient(160deg, #18181b 0%, #111113 100%)",
       border: "1px solid #27272a",
+      minHeight: inset ? undefined : 200,
     }}>
       {/* Decorative grid */}
       <div aria-hidden="true" style={{

@@ -52,12 +52,15 @@ export default function PosterGallery({ events, loading = false }) {
 
   return (
     <>
-      {/* Masonry */}
-      <div style={{ columns: "4 200px", columnGap: 16 }}>
+      {/* Responsive grid — each poster determines its own height naturally */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        gap: 16,
+        alignItems: "start",
+      }}>
         {events.map(event => (
-          <div key={event.id} style={{ breakInside: "avoid", marginBottom: 16 }}>
-            <PosterCard event={event} onClick={setLightboxEvent} />
-          </div>
+          <PosterCard key={event.id} event={event} onClick={setLightboxEvent} />
         ))}
       </div>
 

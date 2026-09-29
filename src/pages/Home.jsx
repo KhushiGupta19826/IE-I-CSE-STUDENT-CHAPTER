@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Calendar, Clock, MapPin, Lightbulb, BookOpen, Users, TrendingUp } from "lucide-react";
+import { ArrowRight, Lightbulb, BookOpen, Users, TrendingUp } from "lucide-react";
 import { events } from "../data/events";
 import { stats, whyIEI, siteConfig } from "../data/siteData";
 import { teamData } from "../data/team";
@@ -9,6 +9,7 @@ import EventCard from "../components/EventCard";
 import TeamCard from "../components/TeamCard";
 import SectionHeading from "../components/SectionHeading";
 import SafeImage from "../components/SafeImage";
+import CoverflowCarousel from "../components/CoverflowCarousel";
 
 const ICON_MAP = { Lightbulb, BookOpen, Users, TrendingUp };
 
@@ -35,8 +36,7 @@ function Counter({ target, suffix = "" }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-const featuredEvent = events.find(e => e.status === "upcoming") || events[0];
-const recentEvents  = events.filter(e => e.id !== featuredEvent?.id).slice(0, 4);
+const recentEvents  = events.slice(0, 4);
 const leadershipPreview = teamData.leadership.slice(0, 4);
 
 /* ──────────────────────────────────────────────────────────── */
@@ -287,96 +287,23 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ── FEATURED EVENT ───────────────────────────────────── */}
-      {featuredEvent && (
-        <Section style={{ background: "#050507", borderTop: "1px solid #18181b", borderBottom: "1px solid #18181b" }}>
-          <SectionHeading eyebrow="Don't Miss" title="Featured Event" style={{ marginBottom: 48 }} align="left" />
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              background: "#111113",
-              border: "1px solid #27272a",
-              borderRadius: 20,
-              overflow: "hidden",
-              transition: "border-color 0.25s, box-shadow 0.25s",
-            }}
-            whileHover={{ borderColor: "#3f3f46", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}
-          >
-            {/* Poster */}
-            <div style={{ minHeight: 280, overflow: "hidden" }}>
-              <SafeImage
-                src={featuredEvent.poster}
-                alt={`${featuredEvent.title} poster`}
-                aspectRatio="landscape"
-                style={{ height: "100%" }}
-                placeholderLabel={`${featuredEvent.title}\n${featuredEvent.category}`}
-              />
-            </div>
-
-            {/* Info */}
-            <div style={{ padding: "40px 36px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16 }}>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <span style={{
-                  fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
-                  padding: "4px 12px", borderRadius: 20,
-                  background: "rgba(59,130,246,0.12)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.2)",
-                }}>
-                  {featuredEvent.category}
-                </span>
-                <span style={{
-                  fontSize: 11, fontWeight: 600,
-                  padding: "4px 12px", borderRadius: 20,
-                  background: "rgba(16,185,129,0.1)", color: "#34d399", border: "1px solid rgba(16,185,129,0.2)",
-                }}>
-                  Upcoming
-                </span>
-              </div>
-
-              <h3 style={{ fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 900, color: "#fafafa", lineHeight: 1.15, letterSpacing: "-0.025em" }}>
-                {featuredEvent.title}
-              </h3>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {[
-                  { Icon: Calendar, text: featuredEvent.date },
-                  { Icon: Clock,    text: featuredEvent.time },
-                  { Icon: MapPin,   text: featuredEvent.venue },
-                ].map(({ Icon, text }) => (
-                  <div key={text} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "#71717a" }}>
-                    <Icon size={14} style={{ color: "#3b82f6", flexShrink: 0 }} /> {text}
-                  </div>
-                ))}
-              </div>
-
-              <p style={{ fontSize: 14, color: "#52525b", lineHeight: 1.65, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                {featuredEvent.description}
-              </p>
-
-              <Link
-                to={`/events/${featuredEvent.id}`}
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  padding: "12px 24px", width: "fit-content",
-                  background: "#3b82f6", color: "#fff",
-                  fontSize: 14, fontWeight: 700, borderRadius: 10,
-                  textDecoration: "none", transition: "background 0.2s, box-shadow 0.2s",
-                  marginTop: 8,
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.boxShadow = "0 0 24px rgba(59,130,246,0.35)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "#3b82f6"; e.currentTarget.style.boxShadow = "none"; }}
-              >
-                View Event <ArrowRight size={14} />
-              </Link>
-            </div>
-          </motion.div>
-        </Section>
-      )}
+      {/* ── FEATURED EVENTS (3D Coverflow Carousel) ─────────── */}
+      <Section style={{ background: "#050507", borderTop: "1px solid #18181b", borderBottom: "1px solid #18181b" }}>
+        <SectionHeading
+          eyebrow="Our Events"
+          title="Featured Events"
+          subtitle="Explore the events we've hosted and the ones coming up next."
+          style={{ marginBottom: 56 }}
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.55 }}
+        >
+          <CoverflowCarousel />
+        </motion.div>
+      </Section>
 
       {/* ── STATS ────────────────────────────────────────────── */}
       <section style={{
@@ -452,52 +379,103 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Asymmetric grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(6, 1fr)",
-          gridTemplateRows: "auto auto",
-          gap: 12,
-        }}>
-          {events.slice(0, 6).map((event, idx) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
-              style={{
-                gridColumn: idx === 0 ? "span 2" : idx === 3 ? "span 2" : "span 1",
-                gridRow:    idx === 0 ? "span 2" : "span 1",
-                borderRadius: 12, overflow: "hidden",
-                border: "1px solid #27272a",
-                cursor: "pointer",
-              }}
-            >
-              <Link to="/posters" style={{ display: "block", position: "relative" }}>
-                <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} style={{ overflow: "hidden" }}>
-                  <SafeImage
-                    src={event.poster}
-                    alt={event.title}
-                    aspectRatio="poster"
-                    placeholderLabel={event.title}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)",
-                    display: "flex", alignItems: "flex-end", padding: 12,
-                  }}
-                >
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", lineHeight: 1.3 }}>{event.title}</span>
-                </motion.div>
-              </Link>
-            </motion.div>
-          ))}
+        {/* 2-row poster gallery — row1: 5 posters, row2: 4 posters centered */}
+        <style>{`
+          .hp-poster-row { display: flex; gap: 12px; }
+          .hp-poster-row-2 { justify-content: center; }
+          .hp-poster-item {
+            flex: 0 0 calc((100% - 48px) / 5);
+            min-width: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #27272a;
+            background: #09090b;
+            cursor: pointer;
+          }
+          @media (max-width: 1024px) {
+            .hp-poster-row { flex-wrap: wrap; }
+            .hp-poster-row-2 { justify-content: flex-start; }
+            .hp-poster-item { flex: 0 0 calc((100% - 24px) / 3); }
+          }
+          @media (max-width: 600px) {
+            .hp-poster-item { flex: 0 0 calc((100% - 12px) / 2); }
+          }
+        `}</style>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* Row 1 — 5 posters */}
+          <div className="hp-poster-row">
+            {events.slice(0, 5).map((event, idx) => (
+              <motion.div
+                key={event.id}
+                className="hp-poster-item"
+                initial={{ opacity: 0, scale: 0.92 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: idx * 0.04 }}
+              >
+                <Link to="/posters" style={{ display: "block", position: "relative" }}>
+                  <motion.div whileHover={{ scale: 1.04 }} transition={{ duration: 0.4 }} style={{ overflow: "hidden" }}>
+                    <img
+                      src={event.poster}
+                      alt={event.title}
+                      loading="lazy"
+                      style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      position: "absolute", inset: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)",
+                      display: "flex", alignItems: "flex-end", padding: 10,
+                    }}
+                  >
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "#fff", lineHeight: 1.3 }}>{event.title}</span>
+                  </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Row 2 — 4 posters, centered */}
+          <div className="hp-poster-row hp-poster-row-2">
+            {events.slice(5).map((event, idx) => (
+              <motion.div
+                key={event.id}
+                className="hp-poster-item"
+                initial={{ opacity: 0, scale: 0.92 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: idx * 0.04 }}
+              >
+                <Link to="/posters" style={{ display: "block", position: "relative" }}>
+                  <motion.div whileHover={{ scale: 1.04 }} transition={{ duration: 0.4 }} style={{ overflow: "hidden" }}>
+                    <img
+                      src={event.poster}
+                      alt={event.title}
+                      loading="lazy"
+                      style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      position: "absolute", inset: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)",
+                      display: "flex", alignItems: "flex-end", padding: 10,
+                    }}
+                  >
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "#fff", lineHeight: 1.3 }}>{event.title}</span>
+                  </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </Section>
 

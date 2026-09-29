@@ -8,10 +8,11 @@ const FILTERS = [
   { label: "All",          value: "all" },
   { label: "2026",         value: "2026" },
   { label: "2025",         value: "2025" },
-  { label: "Workshops",    value: "Workshop" },
   { label: "Competitions", value: "Competition" },
-  { label: "Hackathons",   value: "Hackathon" },
+  { label: "Workshops",    value: "Workshop" },
   { label: "Seminars",     value: "Seminar" },
+  { label: "Hiring",       value: "Hiring" },
+  { label: "Orientation",  value: "Orientation" },
 ];
 
 function filterPosters(all, filter, search) {

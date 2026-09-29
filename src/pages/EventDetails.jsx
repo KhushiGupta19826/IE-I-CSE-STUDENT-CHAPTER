@@ -5,10 +5,12 @@ import { getEventById } from "../data/events";
 import SafeImage from "../components/SafeImage";
 
 const catColor = {
-  Workshop:    { bg: "rgba(139,92,246,0.12)", text: "#a78bfa", border: "rgba(139,92,246,0.2)" },
-  Hackathon:   { bg: "rgba(249,115,22,0.12)", text: "#fb923c", border: "rgba(249,115,22,0.2)" },
-  Competition: { bg: "rgba(239,68,68,0.12)",  text: "#f87171", border: "rgba(239,68,68,0.2)" },
-  Seminar:     { bg: "rgba(14,165,233,0.12)", text: "#38bdf8", border: "rgba(14,165,233,0.2)" },
+  Workshop:    { bg: "rgba(139,92,246,0.12)",  text: "#a78bfa", border: "rgba(139,92,246,0.2)" },
+  Hackathon:   { bg: "rgba(249,115,22,0.12)",  text: "#fb923c", border: "rgba(249,115,22,0.2)" },
+  Competition: { bg: "rgba(239,68,68,0.12)",   text: "#f87171", border: "rgba(239,68,68,0.2)" },
+  Seminar:     { bg: "rgba(14,165,233,0.12)",  text: "#38bdf8", border: "rgba(14,165,233,0.2)" },
+  Hiring:      { bg: "rgba(234,179,8,0.12)",   text: "#facc15", border: "rgba(234,179,8,0.2)" },
+  Orientation: { bg: "rgba(168,85,247,0.12)",  text: "#c084fc", border: "rgba(168,85,247,0.2)" },
   Other:       { bg: "rgba(113,113,122,0.12)", text: "#a1a1aa", border: "rgba(113,113,122,0.2)" },
 };
 const statusStyle = {
@@ -88,17 +90,17 @@ export default function EventDetails() {
       {/* Hero */}
       <section style={{ maxWidth: 1280, margin: "0 auto", padding: "32px 24px 64px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "start" }}>
-          {/* Poster */}
+          {/* Poster — objectFit:contain preserves portrait ratio */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #27272a", maxWidth: 380 }}
+            style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #27272a", background: "#09090b" }}
           >
             <SafeImage
               src={event.poster}
               alt={`${event.title} poster`}
-              aspectRatio="poster"
+              aspectRatio="natural"
               placeholderLabel={`${event.title}\n${event.category}`}
             />
           </motion.div>
@@ -135,7 +137,7 @@ export default function EventDetails() {
                 { Icon: Clock,    text: event.time },
                 { Icon: MapPin,   text: event.venue },
                 event.organizers?.length && { Icon: Users, text: event.organizers.join(", ") },
-              ].filter(Boolean).map(({ Icon, text }) => (
+              ].filter(Boolean).filter(({ text }) => text).map(({ Icon, text }) => (
                 <div key={text} style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "#a1a1aa" }}>
                   <Icon size={14} style={{ color: "#3b82f6", flexShrink: 0 }} /> {text}
                 </div>

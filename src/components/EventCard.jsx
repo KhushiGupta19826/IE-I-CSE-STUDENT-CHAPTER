@@ -4,11 +4,13 @@ import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
 import SafeImage from "./SafeImage";
 
 const catColor = {
-  Workshop:    { bg: "rgba(139,92,246,0.12)", text: "#a78bfa", border: "rgba(139,92,246,0.2)" },
-  Hackathon:   { bg: "rgba(249,115,22,0.12)", text: "#fb923c", border: "rgba(249,115,22,0.2)" },
-  Competition: { bg: "rgba(239,68,68,0.12)",  text: "#f87171", border: "rgba(239,68,68,0.2)" },
-  Seminar:     { bg: "rgba(14,165,233,0.12)", text: "#38bdf8", border: "rgba(14,165,233,0.2)" },
-  Technical:   { bg: "rgba(20,184,166,0.12)", text: "#2dd4bf", border: "rgba(20,184,166,0.2)" },
+  Workshop:    { bg: "rgba(139,92,246,0.12)",  text: "#a78bfa", border: "rgba(139,92,246,0.2)" },
+  Hackathon:   { bg: "rgba(249,115,22,0.12)",  text: "#fb923c", border: "rgba(249,115,22,0.2)" },
+  Competition: { bg: "rgba(239,68,68,0.12)",   text: "#f87171", border: "rgba(239,68,68,0.2)" },
+  Seminar:     { bg: "rgba(14,165,233,0.12)",  text: "#38bdf8", border: "rgba(14,165,233,0.2)" },
+  Technical:   { bg: "rgba(20,184,166,0.12)",  text: "#2dd4bf", border: "rgba(20,184,166,0.2)" },
+  Hiring:      { bg: "rgba(234,179,8,0.12)",   text: "#facc15", border: "rgba(234,179,8,0.2)" },
+  Orientation: { bg: "rgba(168,85,247,0.12)",  text: "#c084fc", border: "rgba(168,85,247,0.2)" },
   Other:       { bg: "rgba(113,113,122,0.12)", text: "#a1a1aa", border: "rgba(113,113,122,0.2)" },
 };
 
@@ -44,13 +46,13 @@ export default function EventCard({ event }) {
         borderColor: "#3f3f46",
       }}
     >
-      {/* Poster */}
-      <div style={{ overflow: "hidden" }}>
+      {/* Poster — objectFit:contain preserves original portrait proportions */}
+      <div style={{ overflow: "hidden", background: "#09090b" }}>
         <motion.div whileHover={{ scale: 1.04 }} transition={{ duration: 0.5 }}>
           <SafeImage
             src={event.poster}
             alt={`${event.title} poster`}
-            aspectRatio="poster"
+            aspectRatio="natural"
             placeholderLabel={`${event.title}\n${event.category}`}
           />
         </motion.div>
@@ -97,7 +99,7 @@ export default function EventCard({ event }) {
             { Icon: Calendar, text: event.date },
             { Icon: Clock,    text: event.time },
             { Icon: MapPin,   text: event.venue },
-          ].map(({ Icon, text }) => (
+          ].filter(({ text }) => text).map(({ Icon, text }) => (
             <li key={text} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#71717a" }}>
               <Icon size={13} style={{ color: "#3b82f6", flexShrink: 0 }} />
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{text}</span>

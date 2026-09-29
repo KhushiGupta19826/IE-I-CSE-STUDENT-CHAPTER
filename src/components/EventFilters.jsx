@@ -4,11 +4,11 @@ const FILTERS = [
   { label: "All",          value: "all" },
   { label: "Upcoming",     value: "upcoming" },
   { label: "Past",         value: "past" },
-  { label: "Workshops",    value: "Workshop" },
-  { label: "Hackathons",   value: "Hackathon" },
   { label: "Competitions", value: "Competition" },
+  { label: "Workshops",    value: "Workshop" },
   { label: "Seminars",     value: "Seminar" },
-  { label: "Technical",    value: "Technical" },
+  { label: "Hiring",       value: "Hiring" },
+  { label: "Orientation",  value: "Orientation" },
   { label: "Other",        value: "Other" },
 ];
 
